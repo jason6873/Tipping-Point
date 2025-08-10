@@ -6,11 +6,14 @@
     <title>Tip Tracker Dashboard</title>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
-    // Replace with YOUR actual values from Supabase Settings → API
     const SUPABASE_URL = 'https://dzbnwqjjekdrqxfwaght.supabase.co'
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR6Ym53cWpqZWtkcnF4ZndhZ2h0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ3ODE4NTYsImV4cCI6MjA3MDM1Nzg1Nn0._S1r803dvQn0saJN5vFPFYooqHnaABC2Fv9h8pZd3t4'
+    const SUPABASE_ANON_KEY = 'your-anon-key-here'
     
-    // Wait for the library to load
+    // Add these debug lines:
+    console.log('URL:', SUPABASE_URL);
+    console.log('Key:', SUPABASE_ANON_KEY);
+    console.log('URL type:', typeof SUPABASE_URL);
+    
     document.addEventListener('DOMContentLoaded', function() {
         window.supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     });
