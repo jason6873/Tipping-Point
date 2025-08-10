@@ -721,48 +721,78 @@
         document.getElementById('billTotal').addEventListener('input', calculateTip);
         document.getElementById('tipAmount').addEventListener('input', calculateTip);
 
-        document.getElementById('tipForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+        document.getElementById('tipForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const restaurant = document.getElementById('restaurant').value;
+    const serviceType = document.getElementById('serviceType').value;
+    
+    // Validate input based on method
+    if (inputMethod === 'quick' && selectedTipPercentage === null) {
+        alert('Please select a tip percentage.');
+        return;
+    }
+    
+    if (inputMethod === 'detailed') {
+        const billTotal = parseFloat(document.getElementById('billTotal').value);
+        const tipAmount = parseFloat(document.getElementById('tipAmount').value);
+        if (!billTotal || !tipAmount) {
+            alert('Please enter both bill total and tip amount.');
+            return;
+        }
+    }
+    
+    // Prepare data for database
+    let tipData = {
+        business_name: restaurant,
+        service_type: serviceType
+    };
+    
+    if (inputMethod === 'quick') {
+        tipData.tip_percentage = selectedTipPercentage;
+    } else {
+        const billTotal = parseFloat(document.getElementById('billTotal').value);
+        const tipAmount = parseFloat(document.getElementById('tipAmount').value);
+        const percentage = ((tipAmount / billTotal) * 100);
+        
+        tipData.bill_total = billTotal;
+        tipData.tip_amount = tipAmount;
+        tipData.tip_percentage = percentage;
+    }
+    
+    // Save to database
+    try {
+        const { data, error } = await supabase
+            .from('tips')
+            .insert([tipData]);
             
-            const restaurant = document.getElementById('restaurant').value;
-            const serviceType = document.getElementById('serviceType').value;
-            
-            // Validate input based on method
-            if (inputMethod === 'quick' && selectedTipPercentage === null) {
-                alert('Please select a tip percentage.');
-                return;
-            }
-            
-            if (inputMethod === 'detailed') {
-                const billTotal = parseFloat(document.getElementById('billTotal').value);
-                const tipAmount = parseFloat(document.getElementById('tipAmount').value);
-                if (!billTotal || !tipAmount) {
-                    alert('Please enter both bill total and tip amount.');
-                    return;
-                }
-            }
-            
-            // Get tip display value
-            let tipDisplay;
-            if (inputMethod === 'quick') {
-                tipDisplay = selectedTipPercentage + '%';
-            } else {
-                const billTotal = parseFloat(document.getElementById('billTotal').value);
-                const tipAmount = parseFloat(document.getElementById('tipAmount').value);
-                const percentage = ((tipAmount / billTotal) * 100).toFixed(1);
-                tipDisplay = percentage + '%';
-            }
-            
-            // Animate the new submission
-            animateNewSubmission(restaurant, serviceType, tipDisplay);
-            
-            alert('Tip data submitted! Thank you for contributing to transparency.');
-            
-            // Reset form
-            resetForm();
-            document.getElementById('restaurant').value = '';
-            document.getElementById('serviceType').value = '';
-        });
+        if (error) {
+            console.error('Error:', error);
+            alert('Error submitting tip. Please try again.');
+            return;
+        }
+        
+        alert('Tip data submitted! Thank you for contributing to transparency.');
+        
+        // Animate the new submission
+        let tipDisplay = inputMethod === 'quick' ? 
+            selectedTipPercentage + '%' : 
+            ((tipData.tip_amount / tipData.bill_total) * 100).toFixed(1) + '%';
+        animateNewSubmission(restaurant, serviceType, tipDisplay);
+        
+        // Reset form
+        resetForm();
+        document.getElementById('restaurant').value = '';
+        document.getElementById('serviceType').value = '';
+        
+        // Refresh data
+        loadRecentSubmissions();
+        
+    } catch (err) {
+        console.error('Unexpected error:', err);
+        alert('Error submitting tip. Please try again.');
+    }
+});
     </script>
 </body>
 </html>
