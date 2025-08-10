@@ -8,7 +8,7 @@
 <script>
     const SUPABASE_URL = 'https://dzbnwqjjekdrqxfwaght.supabase.co'
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR6Ym53cWpqZWtkcnF4ZndhZ2h0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ3ODE4NTYsImV4cCI6MjA3MDM1Nzg1Nn0._S1r803dvQn0saJN5vFPFYooqHnaABC2Fv9h8pZd3t4'
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 </script>
     <style>
         * {
